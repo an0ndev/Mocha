@@ -18,17 +18,12 @@
 	return [super init];
 }
 - (void) applicationDidFinishLaunching: (NSNotification*) notification {
-	NSString* resourcePath = @"/Library/Application Support/Mocha/";
-	NSString* enabledPath = [resourcePath stringByAppendingPathComponent: @"active.png"];
-	NSString* disabledPath = [resourcePath stringByAppendingPathComponent: @"inactive.png"];
-	enabledImage = [[NSImage alloc] initByReferencingFile: enabledPath];
-	disabledImage = [[NSImage alloc] initByReferencingFile: disabledPath];
 	enabled = NO;
 	
-	statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength: NSSquareStatusItemLength];
-	statusItem.button.action = @selector (buttonClicked:);
-	
-	statusItem.button.image = disabledImage;
+	statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength: NSVariableStatusItemLength];
+	statusItem.button.action = @selector (buttonClicked:);	
+    [statusItem.button sendActionOn: NSEventMaskLeftMouseDown | NSEventMaskRightMouseDown];
+	statusItem.button.title = @"Caffeinate";
 }
 - (void) alert: (NSString*) string {
 	NSAlert* alert = [[NSAlert alloc] init];
@@ -37,11 +32,15 @@
 	[alert runModal];
 }
 - (void) buttonClicked: (NSStatusItem*) sender {
-	enabled = !enabled;
-	
-	[[NSTask launchedTaskWithLaunchPath: @"/usr/bin/sudo" arguments: @[@"/usr/bin/MochaHelper", enabled ? @"enable" : @"disable"]] waitUntilExit];
-	
-	statusItem.button.image = enabled ? enabledImage : disabledImage;
+    if (NSApp.currentEvent.type == NSEventTypeRightMouseDown) {
+        [NSApp stop: self];
+    } else if (NSApp.currentEvent.type == NSEventTypeLeftMouseDown) {
+    	enabled = !enabled;
+	    
+    	[[NSTask launchedTaskWithLaunchPath: @"/usr/bin/sudo" arguments: @[@"/usr/local/bin/MochaHelper", enabled ? @"enable" : @"disable"]] waitUntilExit];
+        
+    	statusItem.button.title = enabled ? @"Decaffeinate" : @"Caffeinate";
+    }
 }
 @end
 
