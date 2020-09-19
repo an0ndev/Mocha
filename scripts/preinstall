@@ -1,0 +1,10 @@
+#!/bin/bash
+export SUDOERS_TARGET="/etc/sudoers.d/MochaHelper"
+export HELPER_TARGET="/usr/bin/MochaHelper"
+export LOGGED_IN_USER=$( scutil <<< "show State:/Users/ConsoleUser" | awk '/Name :/ && ! /loginwindow/ { print $3 }' )
+if [ -f $SUDOERS_TARGET ]; then
+	rm $SUDOERS_TARGET
+fi
+# idiom from https://scriptingosx.com/2019/09/get-current-user-in-shell-scripts-on-macos/
+echo $LOGGED_IN_USER ALL= NOPASSWD: $HELPER_TARGET >> $SUDOERS_TARGET
+
