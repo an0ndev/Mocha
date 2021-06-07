@@ -3,8 +3,8 @@
 <plist version="1.0">
 <dict>
   <key>CFBundleName</key>
-  <string>Soup Fork</string>
+  <string>Mocha</string>
   <key>CFBundleExecutable</key>
-  <string>SoupFork</string>
+  <string>Mocha</string>
 </dict>
 </plist>
